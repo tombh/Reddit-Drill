@@ -19,7 +19,7 @@ story = get_data()
 comments = story[1]['data']['children']
 top_reply = comments[0]['data']
 
-f = open('drill.html', 'w')
+f = open('/var/www/tombh/reddit_drill/drill.html', 'w')
 f.write('<ul>' + "\n")
 
 count = 0
