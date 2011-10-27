@@ -74,6 +74,7 @@ class Miner:
                 
                 if 'data' in v: #this is the sig that tells if it's actually worth mining further
                     
+                    children = list()
                     cleaned["children"] = list()
                     
                     if 'more' in v['data']['children'][0]['kind']:                
@@ -84,8 +85,12 @@ class Miner:
                         #instead, it's better to take the parent comments id and then pop off the first comment from the new page,
                         #thus the need for the horribly long dictionary reference. 
                         comment_id = seam['id']
-                        result = self.get_data(comment_id)                        
-                        children = result[1]['data']['children'][0]['data']['replies']['data']['children']
+                        result = self.get_data(comment_id)
+                        
+                        replies = result[1]['data']['children'][0]['data']['replies']
+                        if 'data' in replies:
+                            children = replies['data']['children']                             
+                        
                     else:                        
                         children = v['data']['children']
                     
@@ -95,7 +100,7 @@ class Miner:
                         
                         #only drill the first few replies
                         rating += 1
-                        if rating == 3: break
+                        if rating == 2: break
                         
                         #only recurse if there are deeper replies
                         #the sig for that is the 'body' key
@@ -110,8 +115,8 @@ class Miner:
                                     
                 
             #EVERYTHING ELSE
-            else:
-                cleaned['data'][k] = v
+            #else:
+                #cleaned['data'][k] = v
             
             
             
