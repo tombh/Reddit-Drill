@@ -1,3 +1,8 @@
+############################################################################################
+#This is the original Reddit Drill.
+#It produces an HTML list of the the top reply to each comment, as far as it can drill down.
+############################################################################################
+
 from pprint import pprint
 import sys
 import urllib

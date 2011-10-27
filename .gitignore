@@ -1,3 +1,6 @@
 drill.html
 drill.debug
 drill.json
+*.pyc
+.project
+.pydevproject
