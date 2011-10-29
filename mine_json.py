@@ -9,6 +9,9 @@ import urllib
 import json
 
 class Miner:
+    
+    maxDepth = 20
+    maxRating = 100
 
     def get_permalink(self, comment_id = ''):
         return "http://www.reddit.com/r/AskReddit/comments/ks4da/we_had_to_temporarily_block_the_what" + "/" + comment_id
@@ -51,7 +54,7 @@ class Miner:
         cleaned["data"] = dict()
         
         depth += 1    
-        #if depth > 150: return cleaned #how far down the rabbit-hole do you want to go?
+        if depth > self.maxDepth: return cleaned #how far down the rabbit-hole do you want to go?
         
         #loop over the dict's *keys*, body, id, children, etc
         #this is looping over the raw JSON structure returned by the API
@@ -64,7 +67,7 @@ class Miner:
                 
             #BODY                        
             elif k == 'body':
-                cleaned['name'] = v[:15]
+                cleaned['name'] = v[:50]
                 cleaned['data']['body'] = v
                 string = str(depth) + "(" + str(rating) + "): " + v
                 pprint(string)
@@ -100,7 +103,7 @@ class Miner:
                         
                         #only drill the first few replies
                         rating += 1
-                        if rating == 2: break
+                        if rating > self.maxRating: break
                         
                         #only recurse if there are deeper replies
                         #the sig for that is the 'body' key

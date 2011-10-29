@@ -30,22 +30,28 @@ var Log = {
 function init(){
     
     var infovis = document.getElementById('infovis');
-    var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
+    //var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
     
     //init Hypertree
     var ht = new $jit.RGraph({
       //id of the visualization container
       injectInto: 'infovis',      
-      levelDistance: 5,
+      levelDistance: 30,
       orientation: 'top',
       //canvas width and height
-      width: w,
-      height: h,
+      //width: w,
+      //height: h,
+      Navigation: {  
+        enable: true,  
+        type: 'auto',  
+        panning: true, //true, 'avoid nodes'  
+        zooming: 50 
+      },
       //Change node and edge styles such as
       //color, width and dimensions.
       Node: {
         overridable: true,
-        dim: 2,
+        dim: 3,
         color: "#7BA591"
       },
       NodeStyles: {  
@@ -57,20 +63,23 @@ function init(){
         duration: 100
       },
       Events: {  
-        enable: true,  
+        enable: true,
+        type: 'auto',  
         onClick: function(node, eventInfo, e) {  
-          console.log(node);  
+          console.log(node);
+          console.log(eventInfo);
+          console.log(e);
         } 
-      },  
+      },
       Tips: {  
         enable: true,  
         type: 'Native',  
-        offsetX: 10,  
-        offsetY: 10,  
+        //offsetX: 10,  
+        //offsetY: 10,  
         onShow: function(tip, node) {  
-          tip.innerHTML = node.data.body;  
+         tip.innerHTML = node.data.body;  
         }  
-      },          
+      },
       Edge: {
           lineWidth: 1,
           color: "#D8DCBD"
