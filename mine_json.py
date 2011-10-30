@@ -10,8 +10,8 @@ import json
 
 class Miner:
     
-    maxDepth = 20
-    maxRating = 100
+    maxDepth = 800
+    maxRating = 3
 
     def get_permalink(self, comment_id = ''):
         return "http://www.reddit.com/r/AskReddit/comments/ks4da/we_had_to_temporarily_block_the_what" + "/" + comment_id
