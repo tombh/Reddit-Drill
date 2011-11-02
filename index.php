@@ -9,15 +9,13 @@ if(empty($_GET['depth'])){
 	<head>
 		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'> 
 		<link href='web/styles.css' rel='stylesheet' type='text/css'>
-    <script language="javascript" type="text/javascript" >
-      <?php echo file_get_contents("ore/drill" . $depth . ".json") ?>
-    </script>
+        <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script language="javascript" type="text/javascript" src="web/thejit.js"></script>
 		<script language="javascript" type="text/javascript" src="web/main.js"></script>
 	</head>
 
 	<body>
-	  <a href="/?depth=750">750</a> | <a href="/?depth=400">400</a> | <a href="/?depth=250">250</a> | <a href="/?depth=150">150</a> | <a href="/?depth=20">20_all</a>
+	  Mouse wheel zooms | Drag and drop to pan | Say "activate the teleportal now" to look silly
 	  <div id="log"></div>
 	  <div id="infovis"></div>
     

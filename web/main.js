@@ -1,6 +1,15 @@
-var labelType, useGradients, nativeTextSupport, animate;
+var labelType, useGradients, nativeTextSupport, animate, ht;
 
-window.onload = function(){ init() };
+$().ready(function(){
+    init();
+    $.getJSON('ore/drill_750.debug', function(data) { 
+        //load JSON data.
+        ht.loadJSON(data);
+        //compute positions and plot.
+        ht.refresh();
+        //end
+    }); 
+});
 
 (function() {
   var ua = navigator.userAgent,
@@ -33,7 +42,7 @@ function init(){
     //var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
     
     //init Hypertree
-    var ht = new $jit.RGraph({
+    ht = new $jit.RGraph({
       //id of the visualization container
       injectInto: 'infovis',      
       levelDistance: 30,
@@ -45,7 +54,7 @@ function init(){
         enable: true,  
         type: 'auto',  
         panning: true, //true, 'avoid nodes'  
-        zooming: 50 
+        zooming: 200 
       },
       //Change node and edge styles such as
       //color, width and dimensions.
@@ -106,15 +115,4 @@ function init(){
           Log.write("done"); 
       }
     });
-    //load JSON data.
-    ht.loadJSON(json);
-    //compute positions and plot.
-    ht.refresh();
-    //end      
-        
-    //ht.loadJSON(json);  
-    //compute node positions and layout  
-    //ht.compute();  
-    //emulate a click on the root node.  
-    //ht.onClick(ht.root);  
 }
