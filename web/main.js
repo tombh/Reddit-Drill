@@ -1,15 +1,35 @@
-var labelType, useGradients, nativeTextSupport, animate, ht;
+var labelType, useGradients, nativeTextSupport, animate, ht, info;
+var comment_conext = false;
+
+var Log = {
+  write: function(text){
+    $("#message").html(text);
+  }
+};
 
 $().ready(function(){
     init();
-    $.getJSON('ore/drill_750.debug', function(data) { 
-        //load JSON data.
-        ht.loadJSON(data);
-        //compute positions and plot.
-        ht.refresh();
-        //end
-    }); 
+    display('13k.json');
+    $("#load").bind('click', function(){
+        $("#more").fadeIn();
+    });
+    $("#more a").bind('click', function(){
+        display(this.rel);
+    });
 });
+
+function display(filename){
+    $("#more").fadeOut();
+    Log.write("Loading data via AJAX");
+    $.getJSON('/ore/' + filename, function(json) {
+        info = json.info;
+        //load JSON data.
+        $("#title").html(info.title);
+        Log.write("Data loaded, computing the visualisation");
+        ht.loadJSON(json.data);
+        ht.refresh();
+    });
+}
 
 (function() {
   var ua = navigator.userAgent,
@@ -26,30 +46,19 @@ $().ready(function(){
   animate = !(iStuff || !nativeCanvasSupport);
 })();
 
-var Log = {
-  elem: false,
-  write: function(text){
-    if (!this.elem) 
-      this.elem = document.getElementById('log');
-    this.elem.innerHTML = text;
-    this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
-  }
-};
+
 
 function init(){
     
     var infovis = document.getElementById('infovis');
-    //var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
-    
+    var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
+        
     //init Hypertree
     ht = new $jit.RGraph({
       //id of the visualization container
       injectInto: 'infovis',      
-      levelDistance: 30,
+      levelDistance: 3,
       orientation: 'top',
-      //canvas width and height
-      //width: w,
-      //height: h,
       Navigation: {  
         enable: true,  
         type: 'auto',  
@@ -60,8 +69,8 @@ function init(){
       //color, width and dimensions.
       Node: {
         overridable: true,
-        dim: 3,
-        color: "#7BA591"
+        dim: 0.75,
+        color: "#000"
       },
       NodeStyles: {  
         enable: true,  
@@ -73,11 +82,11 @@ function init(){
       },
       Events: {  
         enable: true,
-        type: 'auto',  
-        onClick: function(node, eventInfo, e) {  
-          console.log(node);
-          console.log(eventInfo);
-          console.log(e);
+        onRightClick: function(node, eventInfo, e) {  
+          console.log(comment_context);
+          //console.log(eventInfo);
+          //console.log(e);
+          if(comment_context !== false) window.open(comment_context, '_blank');
         } 
       },
       Tips: {  
@@ -85,20 +94,31 @@ function init(){
         type: 'Native',  
         //offsetX: 10,  
         //offsetY: 10,  
-        onShow: function(tip, node) {  
-         tip.innerHTML = node.data.body;  
-        }  
+        onShow: function(tip, node) {
+            comment_context = 'http://reddit.com/' + info.permalink + '/' + node.data.id;
+            var depth = node.data.depth;
+            var rating = "(" + node.data.rating + ") ";
+            if(node.data.depth == undefined){
+                depth = '';
+                rating = "* ";
+            }
+            tip.innerHTML = '<div class="rd_tip"><span>' + depth + rating + node.data.author + " &uarr;" + node.data.ups + " &darr;" + node.data.downs + "</span><br />" + node.data.body_html + '</div>';  
+        },
+        onHide: function(){
+            comment_context = false;
+        } 
       },
       Edge: {
-          lineWidth: 1,
-          color: "#D8DCBD"
+        lineWidth: 0.2,
+        color: "#D8DCBD"
       },
-      onBeforeCompute: function(node){
-          Log.write("centering");
-      },      
       //Change node styles when labels are placed
       //or moved.
-      onBeforePlotNode: function(node) {  
+      onBeforePlotNode: function(node) {
+          if(node.data.depth == undefined){
+              node.setData('dim', 2);
+              first = false;
+          }
           if(node.data.rating == 1) {  
               node.setData('color', '#000');  
           } else if(node.data.rating == 2) {  
@@ -112,7 +132,8 @@ function init(){
           }
       },
       onComplete: function(){
-          Log.write("done"); 
+          Log.write("Complete!");
+          $("#message").fadeOut(5000); 
       }
     });
 }

@@ -7,14 +7,28 @@ from pprint import pprint
 import sys, os
 import urllib
 import json
+import argparse
+import HTMLParser
+
+#pprint(sys.getrecursionlimit())
+sys.setrecursionlimit(1000000)
+#pprint(sys.getrecursionlimit())
+#sys.exit()
 
 class Miner:
     
-    maxDepth = 800
+    maxDepth = 100000
     maxRating = 3
+    
+    def __init__(self):
+        parser = argparse.ArgumentParser(description='Create JSON for the JIT graph visualiser from a Reddit story or comment.')
+        parser.add_argument('url', help='Valid Reddit URL')
+        args = parser.parse_args()
+        self.url = args.url
+        self.htmlParse = HTMLParser.HTMLParser()
 
-    def get_permalink(self, comment_id = ''):
-        return "http://www.reddit.com/r/AskReddit/comments/ks4da/we_had_to_temporarily_block_the_what" + "/" + comment_id
+    def get_permalink(self, comment_id = ''):        
+        return self.url + "/" + comment_id
     
     def get_data(self, comment_id = ''):
         submission = self.get_permalink(comment_id)
@@ -72,6 +86,12 @@ class Miner:
                 string = str(depth) + "(" + str(rating) + "): " + v
                 pprint(string)
             
+            #BODY HTML
+            elif k == 'body_html':
+                #convert html enities to their original characters
+                cleaned['data']['body_html'] = self.htmlParse.unescape(v)
+            
+            
             #REPLIES
             elif k == "replies":
                 
@@ -112,16 +132,13 @@ class Miner:
                         
                             ore = self.drill(new_seam, depth, rating) #horizontal drilling
                             if 'id' in ore:
-                                ore['data']['rating'] = rating                        
-                                cleaned["children"].append(ore)     
-                        
+                                ore['data']['rating'] = rating
+                                ore['data']['depth'] = depth                        
+                                cleaned["children"].append(ore)
                                     
-                
             #EVERYTHING ELSE
-            #else:
-                #cleaned['data'][k] = v
-            
-            
+            else:
+                cleaned['data'][k] = v
             
             
         return cleaned
@@ -133,16 +150,18 @@ class Miner:
 #Let's get this show on the road
 Miner = Miner()
 story = Miner.get_data()
-comments = story[1]['data']['children']
-trunk = comments[0]['data']
-tree = Miner.drill(trunk, 0, 0)
+tree = dict()
+tree['info'] = story[0]['data']['children'][0]['data']
+tree['data'] = list()
+for i in range(0, Miner.maxRating - 1):
+    comments = story[i + 1]['data']['children']
+    trunk = comments[0]['data']
+    tree['data'][i] = Miner.drill(trunk, 0, 0)
 
 #write out the results
 pprint('writing...')
-f = open(os.getcwd() + '/drill.json', 'w')
-f.write('var json = ' + json.dumps(tree) + ';')
 
-f_debug = open(os.getcwd() + '/drill.debug', 'w')
+f_debug = open(os.getcwd() + '/ore/drill.json', 'w')
 f_debug.write(json.dumps(tree)) #so that chrome's json extension pretty prints it. useful for debugging
 
 pprint('fin')
