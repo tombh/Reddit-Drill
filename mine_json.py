@@ -117,24 +117,7 @@ class Miner:
                     else:                        
                         children = v['data']['children']
                     
-                    #loop over the list of children
-                    rating = 0 #this keeps track of horizontal replies to the _same_ comment, we only waant to drill the top few
-                    for child in children: #vertical drilling
-                        
-                        #only drill the first few replies
-                        rating += 1
-                        if rating > self.maxRating: break
-                        
-                        #only recurse if there are deeper replies
-                        #the sig for that is the 'body' key
-                        if 'body' in child['data']:                            
-                            new_seam = child['data']                                
-                        
-                            ore = self.drill(new_seam, depth, rating) #horizontal drilling
-                            if 'id' in ore:
-                                ore['data']['rating'] = rating
-                                ore['data']['depth'] = depth                        
-                                cleaned["children"].append(ore)
+                    cleaned["children"].append(self.loop_children(children, depth))
                                     
             #EVERYTHING ELSE
             else:
@@ -143,7 +126,30 @@ class Miner:
             
         return cleaned
     
-
+    def loop_children(self, children, depth):
+        """
+        #loop over the list of children
+        #This is vertical drilling
+        """
+        
+        rating = 0 #this keeps track of horizontal replies to the _same_ comment, we only waant to drill the top few
+        
+        for child in children:
+                                    
+            #only drill the first few replies
+            rating += 1
+            if rating > self.maxRating: break
+            
+            #only recurse if there are deeper replies
+            #the sig for that is the 'body' key
+            if 'body' in child['data']:                            
+                new_seam = child['data']                                
+            
+                ore = self.drill(new_seam, depth, rating) #horizontal drilling
+                if 'id' in ore:
+                    ore['data']['rating'] = rating
+                    ore['data']['depth'] = depth                        
+                    return ore
 
 
 ###############################################################################
@@ -153,10 +159,8 @@ story = Miner.get_data()
 tree = dict()
 tree['info'] = story[0]['data']['children'][0]['data']
 tree['data'] = list()
-for i in range(0, Miner.maxRating - 1):
-    comments = story[i + 1]['data']['children']
-    trunk = comments[0]['data']
-    tree['data'][i] = Miner.drill(trunk, 0, 0)
+trunk = story[1]['data']['children']
+tree['data'] = Miner.loop_children(trunk, 0)
 
 #write out the results
 pprint('writing...')
