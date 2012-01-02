@@ -1,0 +1,16 @@
+application: redditdrill
+version: 1
+runtime: python27
+api_version: 1
+
+threadsafe: no
+
+handlers:
+- url: /web
+  static_dir: web
+
+- url: /(.*)
+  script: app/controller.py
+
+builtins:
+- remote_api: on

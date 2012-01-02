@@ -1,6 +1,7 @@
 drill.html
 drill.debug
 drill.json
+reddit_api_proxy.py
 *.pyc
 .project
 .pydevproject

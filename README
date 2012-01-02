@@ -1,3 +1,9 @@
 GNU GPL applies to this code.
 
-Very crude and simple method to drill down through comment replies to find out how deep it goes. It also outputs an HTML file that lists all the comments with their depth number and a permalink.
+This code runs at http://reddrill.tombh.co.uk
+
+It takes a tree of reddit comments and cleans them up to work with the JIT (http://thejit.org) - a JS visualisation library.
+
+It's a Google App Engine app.
+
+I'd love any help or suggestions.

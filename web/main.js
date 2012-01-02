@@ -8,26 +8,39 @@ var Log = {
 };
 
 $().ready(function(){
+  if($('#viewer').length){
+
     init();
-    display('13k.json');
-    $("#load").bind('click', function(){
-        $("#more").fadeIn();
-    });
-    $("#more a").bind('click', function(){
-        display(this.rel);
-    });
+    
+    var uri = decodeURIComponent(window.location.href);
+    var regex = /comments\/([0-9a-zA-Z]*)/g;
+    var match = regex.exec(uri);
+    if(match !== null){
+      display(match[1]);
+    }else{
+      $("#title").html("What the... I don't even...");
+    }
+   
+  }
 });
 
-function display(filename){
+function display(id){
     $("#more").fadeOut();
     Log.write("Loading data via AJAX");
-    $.getJSON('/ore/' + filename, function(json) {
-        info = json.info;
-        //load JSON data.
-        $("#title").html(info.title);
-        Log.write("Data loaded, computing the visualisation");
-        ht.loadJSON(json.data);
-        ht.refresh();
+    console.log(id);
+    $.getJSON('/ajax/get_story?id=' + id, function(json) {
+        //load JSON data.        
+        if(typeof json.data !== 'undefined'){
+          info = json.data;
+          $("#title").html(info.title);
+          Log.write("Data loaded, computing the visualisation");
+          ht.loadJSON(json);
+          ht.refresh();
+        }else{
+          $.getJSON('/ajax/save_story?id=' + id, function(json){
+            $('#title').html(json.message);
+          });          
+        }
     });
 }
 
@@ -57,7 +70,7 @@ function init(){
     ht = new $jit.RGraph({
       //id of the visualization container
       injectInto: 'infovis',      
-      levelDistance: 3,
+      levelDistance: 12,
       orientation: 'top',
       Navigation: {  
         enable: true,  
@@ -69,7 +82,7 @@ function init(){
       //color, width and dimensions.
       Node: {
         overridable: true,
-        dim: 0.75,
+        dim: 1.75,
         color: "#000"
       },
       NodeStyles: {  
@@ -109,14 +122,14 @@ function init(){
         } 
       },
       Edge: {
-        lineWidth: 0.2,
+        lineWidth: 0.6,
         color: "#D8DCBD"
       },
       //Change node styles when labels are placed
       //or moved.
       onBeforePlotNode: function(node) {
           if(node.data.depth == undefined){
-              node.setData('dim', 2);
+              node.setData('dim', 5);
               first = false;
           }
           if(node.data.rating == 1) {  

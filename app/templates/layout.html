@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://use.typekit.com/pai1grj.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		<link href='/web/styles.css' rel='stylesheet' type='text/css'>
+        <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+		<script language="javascript" type="text/javascript" src="/web/thejit.min.js"></script>
+		<script language="javascript" type="text/javascript" src="/web/main.js"></script>
+		<title>The Reddit Drill</title>
+	</head>
+
+  <body id="{{ page }}">
+
+	  <div id="top">
+	      <h1>the reddit drill</h1>
+	      <div id="strap">Visualising large reddit stories</div>
+	      <div id="message"></div>
+	      <div id="title"></div>
+        <div id="load">
+          {% if page != 'index' %}
+            <a href="/"> Load others &rarr;</a>
+          {% endif %}
+	      </div>
+    </div>
+
+    {% block content %}{% endblock %}
+    
+	  <div id="bottom">
+	      <div id="info">
+	          Mouse wheel zooms | Drag and drop to pan | Right-click node to go to comment on reddit.com | Comment structure: [depth]([rating]) [author] [upvotes] [downvotes] [body]
+	      </div>
+	      <div id="author">
+	          by <a href="http://tombh.co.uk">tombh</a>
+	      </div>
+	  </div>
+
+    <div id="infovis"></div>
+
+	</body>
+
+</html>

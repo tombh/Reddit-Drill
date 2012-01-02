@@ -69,7 +69,15 @@ h1{
     right: 5px;;
     font-size: 20px;
 }
-
+#content{
+  position: fixed;
+  width: 600px;
+  height: 100%;
+  top: 50px;
+  left: 50%;
+  margin-left: -300px;
+  z-index: 100;
+}
 #infovis{
   position: absolute;
   top: 0;
@@ -118,3 +126,15 @@ h1{
     bottom: 5px;
     right: 5px;
 }
+
+input{
+  font-family: Ubuntu;
+  font-size: 2em;
+  border: 1px solid grey;
+  padding: 6px;  
+  border-radius: 5px;
+}
+input[type=text]{
+  width: 450px;
+}
+

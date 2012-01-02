@@ -1,0 +1,4 @@
+cron:
+- description: Update all stories
+  url: /tasks/update
+  schedule: every 24 hours

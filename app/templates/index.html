@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div id="content">
+
+  <form action="/submit" method="get">
+    <input type="text" name="uri"/>
+    <input type="submit" value="Submit">
+  </form>
+  <ul>
+    {% for story in stories %}
+    <li>
+    <a href="{{ story.permalink }}">{{ story.name }}</a> | {{ story.comments }} comments
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+
